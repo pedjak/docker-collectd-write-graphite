@@ -31,3 +31,38 @@ LoadPlugin write_graphite
  </Carbon>
 </Plugin>
 
+LoadPlugin aggregation
+
+<Plugin "aggregation">
+  <Aggregation>
+    Plugin "cpu"
+    Type "cpu"
+    
+    GroupBy "Host"
+    GroupBy "TypeInstance"
+    
+    CalculateAverage true
+  </Aggregation>
+</Plugin>
+
+LoadPlugin "match_regex" # we want to use this for our Matching
+<Chain "PostCache">
+  <Rule> # Send "cpu" values to the aggregation plugin.
+    <Match regex>
+      Plugin "^cpu$"
+      PluginInstance "^[0-9]+$"
+    </Match>
+    <Target write>
+      Plugin "aggregation"
+    </Target>
+    Target stop
+  </Rule>
+Target "write"
+</Chain>
+
+LoadPlugin python
+<Plugin python>
+  ModulePath "/usr/share/collectd"
+  Import "testworkers"
+
+</Plugin>
