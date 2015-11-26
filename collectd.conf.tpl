@@ -10,6 +10,12 @@ LoadPlugin df
 LoadPlugin load
 LoadPlugin memory
 LoadPlugin write_graphite
+LoadPlugin processes
+LoadPlugin disk
+
+<Plugin processes>
+  Process java
+</Plugin>
 
 <Plugin df>
   Device "hostfs"
